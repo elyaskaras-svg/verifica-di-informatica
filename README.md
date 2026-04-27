@@ -1,0 +1,1 @@
+# verifica-di-informatica
