@@ -1,18 +1,64 @@
-async function calcoloIMC() {
-  
+async function Calcola_IMC() {
+
+    const peso = document.getElementById("peso").value;
+    const altezza = document.getElementById("altezza").value;
+
+    if (!peso || !altezza) 
+        return alert("Scrivi peso e altezza");
+
+    const res = await fetch(`/IMC?peso=${peso}&altezza=${altezza}`);
+    const json = await res.json();
     
-    const peso = parseFloat(document.getElementById('peso').value);
-    const altezza = parseFloat(document.getElementById('altezza').value);
+    if (json.imc == 11){
+        alert("Inserisci valori sopra lo zero o validi");
+    }
+    else if(json.Valutazione == -1){
+        document.getElementById("risultato").innerText = "Il tuo IMC è: "+ json.imc + ". Sei sottopeso";
+    }
+    else if(json.Valutazione == 1){
+        document.getElementById("risultato").innerText = "Il tuo IMC è: "+ json.imc + ". Sei sovrappeso";
+    }
+    else {
+        document.getElementById("risultato").innerText = "Il tuo IMC è: "+ json.imc + ". Sei normopeso";
+    }
     
-    if (peso <= 0 || altezza <= 0) {
-       return alert('Inserisci valori validi per peso e altezza.');
-       const response = await fetch(`/IMC?peso=${peso}&altezza=${altezza}`);
-        const data = await response.json();
-          let categoria = '';
-        if (data.imc < 18.5) categoria = 'Sottopeso';
-        else if (data.imc < 25) categoria = 'Normopeso';
-        else if (data.imc < 30) categoria = 'Sovrappeso';
-        else categoria = 'Obeso';
-        document.getElementById('risultato').innerHTML = `Il tuo IMC è ${data.imc.toFixed(2)} (${categoria})`;
-        
-     }}
+
+}
+
+
+async function Calcola_post() {
+
+    const peso = document.getElementById("peso").value;
+    const altezza = document.getElementById("altezza").value;
+
+    if (!peso || !altezza) 
+        return alert("Scrivi peso e altezza");
+
+    const res = await fetch("/IMC2", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `peso=${peso}&altezza=${altezza}`
+    });
+
+    const json = await res.json();
+    
+    if (json.imc == 11){
+        alert("Inserisci valori sopra lo zero o validi");
+    }
+    else if(json.Valutazione == -1){
+        document.getElementById("risultato2").innerText = "Il tuo IMC è: "+ json.imc + ". Sei sottopeso (con post)";
+    }
+    else if(json.Valutazione == 1){
+        document.getElementById("risultato2").innerText = "Il tuo IMC è: "+ json.imc + ". Sei sovrappeso (con post)";
+    }
+    else {
+        document.getElementById("risultato2").innerText = "Il tuo IMC è: "+ json.imc + ". Sei normopeso (con post)";
+    }
+    
+}
+
+
+document.getElementById('bottone').addEventListener('click', Calcola_post);
+document.getElementById('bottone').addEventListener('click', Calcola_IMC);
