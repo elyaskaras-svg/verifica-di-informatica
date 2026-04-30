@@ -62,3 +62,29 @@ async function Calcola_post() {
 
 document.getElementById('bottone').addEventListener('click', Calcola_post);
 document.getElementById('bottone').addEventListener('click', Calcola_IMC);
+
+const XLSX = require("xlsx");
+const fs = require("fs");
+
+app.post("/salva", (req, res) => {
+    const { peso, altezza, imc } = req.body;
+
+    let wb;
+    if (fs.existsSync("IMC.xlsx")) {
+        wb = XLSX.readFile("IMC.xlsx");
+    } else {
+        wb = XLSX.utils.book_new();
+    }
+
+    let ws = wb.Sheets["Dati"];
+    let dati = ws ? XLSX.utils.sheet_to_json(ws) : [];
+
+    dati.push({ peso, altezza, imc });
+
+    ws = XLSX.utils.json_to_sheet(dati);
+    XLSX.utils.book_append_sheet(wb, ws, "Dati");
+
+    XLSX.writeFile(wb, "IMC.xlsx");
+
+    res.send({ ok: true });
+});
